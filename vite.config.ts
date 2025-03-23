@@ -8,6 +8,7 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  base: "/lost-website",
   plugins: [react()],
   publicDir: 'public',
   server: {
