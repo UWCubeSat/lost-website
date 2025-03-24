@@ -52,12 +52,19 @@ export const Analyze: React.FC<Props> = memo(() => {
                     setFlow("upload")
                     return alert(data)
                 } else {
-                    const parsedData = JSON.parse(data)
+                    const parsedData = JSON.parse(data);
+                    const dataLabels = ["Known", "Right Ascension", "Declination", "Roll", "i", "j", "k", "Real"];
+                    let commandLineData = "";
+                    for(let i = 0; i < parsedData.length; i++){
+                        parsedData.command_line_data;
+                    }
                     setOutput({
                         cmdOutput: parsedData.command_line_data,
-                        attitudeString: Object.entries(parsedData.image_analysis).map(([key, value]) => `${key} ${value}`).join('\n'),
+                        attitudeString: Object.entries(parsedData.image_analysis)
+                            .map(([key, value], index) => `<strong>${dataLabels[index]}:</strong> ${value == 1 ? "True" : value == 0 ? "False" : value}`)
+                            .join('<br>'), // Use <br> instead of \n for proper HTML rendering
                         base64Image: "data:image/jpeg;base64," + parsedData.annotated_image
-                    })
+                    });
                     // setOutput({
                     //     cmdOutput: parsedData.command_line_data,
                     //     attitudeString: parsedData.attitude_string,
@@ -123,11 +130,7 @@ export const Analyze: React.FC<Props> = memo(() => {
                                 </section>
                                 <div className="mt-4">
                                     <h2 className='font-bold mb-2'>Attitude Data</h2>
-                                    <pre className='text-[12px] bg-gray-200 px-3 py-2'>
-                                        {
-                                            output.attitudeString
-                                        }
-                                    </pre>
+                                    <pre className='text-[12px] bg-gray-200 px-3 py-2' dangerouslySetInnerHTML={{ __html: output.attitudeString }} />
                                 </div>
                                 <div className="mt-4 mb-8">
                                     <h2 className='font-bold mb-2'>Log Output</h2>
