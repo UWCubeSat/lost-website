@@ -82,6 +82,29 @@ export const Analyze: React.FC<Props> = memo(() => {
     return (
         <>
             <Navbar activePath='/analyze' />
+            <div className="w-full flex justify-center gap-4 mt-6">
+                <a
+                    href="/demo_image_one.png"
+                    download="demo_image_one.png"
+                    className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
+                >
+                    Download Demo Image 1
+                </a>
+                <a
+                    href="/demo_image_two.png"
+                    download="demo_image_two.png"
+                    className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
+                >
+                    Download Demo Image 2
+                </a>
+                <a
+                    href="/demo_image_three.png"
+                    download="demo_image_three.png"
+                    className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
+                >
+                    Download Demo Image 3
+                </a>
+            </div>
             <div className="w-full flex items-stretch justify-center mt-12 gap-5">
                 <div className="w-[500px] ">
                     {
