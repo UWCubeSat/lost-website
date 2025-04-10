@@ -11,6 +11,9 @@ const Index: React.FC<Props> = memo(() => {
         LOST API
       </div>
       <div className="font-mono flex p-6">
+        LOST is an Open-Source Star Tracker
+      </div>
+      <div className="font-mono flex p-6">
         <div className="w-1/2 p-2 flex justify-center items-center">
           <div className="text-center">
             <div>Brought to you by the </div>{' '}
