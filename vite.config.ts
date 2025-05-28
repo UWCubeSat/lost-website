@@ -8,12 +8,12 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
-  base: "/",
+  base: '/',
   plugins: [react()],
   publicDir: 'public',
   server: {
     host: true,
-    port: 3000,
+    port: 3500,
   },
   resolve: {
     alias: {

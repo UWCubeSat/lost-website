@@ -15,6 +15,7 @@ export const Analyze: React.FC<Props> = memo(() => {
   const [pixelSize, setPixelSize] = useState<number>(22.2)
   const [focalLength, setFocalLength] = useState<number>(35)
   const [magnitudeFilter, setMagnitudeFilter] = useState<number>(5)
+  const [tetraVal, setTetraVal] = useState<number>(0)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const [output, setOutput] = useState({
@@ -50,6 +51,7 @@ export const Analyze: React.FC<Props> = memo(() => {
               focalLength,
               pixelSize,
               centroidMagnitudeFilter: magnitudeFilter,
+              tetra: tetraVal,
             }),
           },
         )
@@ -245,6 +247,22 @@ export const Analyze: React.FC<Props> = memo(() => {
               value={magnitudeFilter}
               onChange={(e) => setMagnitudeFilter(Number(e.target.value))}
               defaultValue={5}
+            />
+          </div>
+          <div className="flex gap-1 flex-col mt-2">
+            <span className="text-sm font-bold flex items-center gap-1">
+              Tetra{' '}
+              <div>
+                <IoIosInformationCircleOutline className="mt-[1.5px] peer" />
+                <div className="absolute font-normal px-2 py-1 bg-white rounded-md border border-gray-400 max-w-[30%] translate-x-1 translate-y-1 hidden peer-hover:block">
+                  Just another algorithm for detecting stars.
+                </div>
+              </div>
+            </span>
+            <input
+              type="checkbox"
+              className="self-start w-5 h-5"
+              onChange={(e) => setTetraVal(Number(tetraVal + (1 % 2)))}
             />
           </div>
           <div className="flex justify-center p-4">
