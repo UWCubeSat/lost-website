@@ -9,9 +9,9 @@ import { IoIosInformationCircleOutline } from 'react-icons/io'
 interface Props {}
 
 export const Analyze: React.FC<Props> = memo(() => {
-  const [flow, setFlow] = useState<'upload' | 'processing' | 'processed'>(
-    'upload',
-  )
+  const [flow, setFlow] = useState<
+    'upload' | 'uploaded' | 'processing' | 'processed'
+  >('upload')
   const [pixelSize, setPixelSize] = useState<number>(22.2)
   const [focalLength, setFocalLength] = useState<number>(35)
   const [magnitudeFilter, setMagnitudeFilter] = useState<number>(5)
@@ -24,15 +24,82 @@ export const Analyze: React.FC<Props> = memo(() => {
     base64Image: '',
   })
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone()
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    accept: { 'image/*': [] },
+    maxFiles: 1,
+    onDrop: async (files) => {
+      const base64 = (await toBase64(files[0])) as string
+      setUploadedImage(base64)
+      setFlow('uploaded')
+    },
+  })
   const files = acceptedFiles.map((file) => (
     <li key={file.path}>
       {file.path} - {file.size} bytes
     </li>
   ))
 
+  const [submitPressed, setSubmitPressed] = useState(false)
+
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+
+  const submitButtonPressed = async (): Promise<void> => {
+    if (!acceptedFiles[0]) return
+
+    setFlow('processing')
+
+    const res = await fetch(
+      'https://lost-backend-1036293057238.us-central1.run.app/analyze',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: await toBase64(acceptedFiles[0]),
+          focalLength,
+          pixelSize,
+          centroidMagnitudeFilter: magnitudeFilter,
+          tetra: tetraVal,
+        }),
+      },
+    )
+
+    const data = await res.text()
+    if (res.status !== 200) {
+      setFlow('upload')
+      return alert(data)
+    }
+
+    const parsedData = JSON.parse(data)
+    const dataLabels = [
+      'Known',
+      'Right Ascension',
+      'Declination',
+      'Roll',
+      'i',
+      'j',
+      'k',
+      'Real',
+    ]
+
+    setOutput({
+      cmdOutput: parsedData.command_line_data,
+      attitudeString: Object.entries(parsedData.image_analysis)
+        .map(
+          ([key, value], index) =>
+            `<strong>${dataLabels[index]}:</strong> ${
+              value === 1 ? 'True' : value === 0 ? 'False' : value
+            }`,
+        )
+        .join('<br>'),
+      base64Image: 'data:image/jpeg;base64,' + parsedData.annotated_image,
+    })
+    setFlow('processed')
+  }
+
   useEffect(() => {
-    if (acceptedFiles.length > 0) {
+    if (submitPressed && acceptedFiles.length > 0) {
       async function process() {
         setFlow('processing')
 
@@ -94,6 +161,7 @@ export const Analyze: React.FC<Props> = memo(() => {
         }
       }
       process()
+      setSubmitPressed(false)
     }
   }, [pixelSize, focalLength, magnitudeFilter, acceptedFiles])
 
@@ -157,7 +225,21 @@ export const Analyze: React.FC<Props> = memo(() => {
               </div>
             </section>
           )}
-
+          {flow === 'uploaded' && uploadedImage && (
+            <section className="w-full border-dashed border-2 px-8 py-2 border-gray-400 rounded-2xl flex items-center justify-center">
+              <div className="w-full justify-center items-center flex flex-col">
+                <h3 className="font-bold text-gray-800 text-[20px]">
+                  Original Image:
+                </h3>
+                <img
+                  onClick={() => setModalVisible(true)}
+                  className="rounded-lg mt-4 mb-4 cursor-pointer"
+                  src={uploadedImage}
+                  alt="Uploaded Image"
+                />
+              </div>
+            </section>
+          )}
           {flow === 'processed' && (
             <>
               <section className="w-full border-dashed border-2 px-8 py-2 border-gray-400 rounded-2xl flex items-center justify-center">
@@ -269,6 +351,7 @@ export const Analyze: React.FC<Props> = memo(() => {
             <button
               type="submit"
               className="cursor-pointer border-solid py-1 px-2 border-2 rounded-lg hover:bg-black hover:text-white"
+              onClick={submitButtonPressed}
             >
               Submit
             </button>

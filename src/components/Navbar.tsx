@@ -9,6 +9,7 @@ export const pages = [
     path: '/analyze',
     newTab: false,
   },
+  { title: 'Generate', path: '/generate', newTab: false },
   {
     title: 'Husky Satellite Lab',
     path: 'https://huskysat.aa.washington.edu/',
@@ -16,7 +17,7 @@ export const pages = [
   },
 ]
 
-export function Navbar(props: { activePath: '/' | '/analyze' }) {
+export function Navbar(props: { activePath: '/' | '/analyze' | '/generate' }) {
   return (
     <div>
       <nav className="bg-white border-gray-200">
