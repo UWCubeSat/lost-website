@@ -22,6 +22,7 @@ export const Analyze: React.FC<Props> = memo(() => {
     cmdOutput: '',
     attitudeString: '',
     base64Image: '',
+    processingTime: 0
   })
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
@@ -94,6 +95,7 @@ export const Analyze: React.FC<Props> = memo(() => {
         )
         .join('<br>'),
       base64Image: 'data:image/jpeg;base64,' + parsedData.annotated_image,
+      processingTime: parsedData.processingTime,
     })
     setFlow('processed')
   }
@@ -151,6 +153,7 @@ export const Analyze: React.FC<Props> = memo(() => {
               )
               .join('<br>'), // Use <br> instead of \n for proper HTML rendering
             base64Image: 'data:image/jpeg;base64,' + parsedData.annotated_image,
+            processingTime: parsedData.processingTime,
           })
           // setOutput({
           //     cmdOutput: parsedData.command_line_data,
@@ -267,10 +270,16 @@ export const Analyze: React.FC<Props> = memo(() => {
                   dangerouslySetInnerHTML={{ __html: output.attitudeString }}
                 />
               </div>
-              <div className="mt-4 mb-8">
+              <div className="mt-4">
                 <h2 className="font-bold mb-2">Log Output</h2>
                 <pre className="text-[12px] bg-gray-200 px-3 py-2">
                   {output.cmdOutput}
+                </pre>
+              </div>
+              <div className="mt-4 mb-8">
+                <h2 className="font-bold mb-2">Processing Time - Only includes LOST processing</h2>
+                <pre className="text-[12px] bg-gray-200 px-3 py-2">
+                  {output.processingTime}ms
                 </pre>
               </div>
             </>
