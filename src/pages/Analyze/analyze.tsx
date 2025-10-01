@@ -17,6 +17,7 @@ export const Analyze: React.FC<Props> = memo(() => {
   const [magnitudeFilter, setMagnitudeFilter] = useState<number>(5)
   const [tetraVal, setTetraVal] = useState<number>(0)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [fovVal, setFovVal] = useState<number>(30)
 
   const [output, setOutput] = useState({
     cmdOutput: '',
@@ -119,6 +120,7 @@ export const Analyze: React.FC<Props> = memo(() => {
               pixelSize,
               centroidMagnitudeFilter: magnitudeFilter,
               tetra: tetraVal,
+              fov: fovVal,
             }),
           },
         )
@@ -329,6 +331,29 @@ export const Analyze: React.FC<Props> = memo(() => {
               value={magnitudeFilter}
               onChange={(e) => setMagnitudeFilter(Number(e.target.value))}
               defaultValue={5}
+            />
+          </div>
+          <div className="flex gap-1 flex-col mt-2">
+            <span className="text-sm font-bold flex items-center gap-1">
+              FOV
+              <div>
+                <IoIosInformationCircleOutline className="mt-[1.5px] peer" />
+                <div className="absolute font-normal px-2 py-1 bg-white rounded-md border border-gray-400 max-w-[30%] translate-x-1 translate-y-1 hidden peer-hover:block">
+                  FOV, short for "field of view," refers to the extent of a
+                  scene visible through an optical device or camera. A higher
+                  FOV means you can see more of the scene.
+                </div>
+              </div>
+            </span>
+            <input
+              type="number"
+              className="border border-gray-400 rounded-md px-2 py-1 text-sm"
+              min={1}
+              max={100}
+              placeholder="Centroid Magnitude Filter"
+              value={fovVal}
+              onChange={(e) => setFovVal(Number(e.target.value))}
+              defaultValue={30}
             />
           </div>
           <div className="flex gap-1 flex-col mt-2">
