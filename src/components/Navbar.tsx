@@ -9,7 +9,7 @@ export const pages = [
     path: '/analyze',
     newTab: false,
   },
-  { title: 'Generate', path: '/generate', newTab: false },
+  //{ title: 'Generate', path: '/generate', newTab: false },
   {
     title: 'Husky Satellite Lab',
     path: 'https://huskysat.aa.washington.edu/',
