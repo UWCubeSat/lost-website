@@ -346,7 +346,7 @@ export const Analyze: React.FC<Props> = memo(() => {
               <div>
                 <IoIosInformationCircleOutline className="mt-[1.5px] peer" />
                 <div className="absolute font-normal px-2 py-1 bg-white rounded-md border border-gray-400 max-w-[30%] translate-x-1 translate-y-1 hidden peer-hover:block">
-                  Just another algorithm for detecting stars.
+                  An alternative algorithm for star tracking
                 </div>
               </div>
             </span>
