@@ -279,7 +279,7 @@ export const Analyze: React.FC<Props> = memo(() => {
               <div className="mt-4 mb-8">
                 <h2 className="font-bold mb-2">Processing Time - Only includes LOST processing</h2>
                 <pre className="text-[12px] bg-gray-200 px-3 py-2">
-                  {output.processingTime}ms
+                  {Number(output.processingTime).toFixed(2)}ms
                 </pre>
               </div>
             </>
