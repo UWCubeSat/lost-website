@@ -245,6 +245,14 @@ export const Analyze: React.FC<Props> = memo(() => {
           )}
           {flow === 'processed' && (
             <>
+              <div {...getRootProps({ className: 'dropzone' })}>
+                <section className="w-full border-dashed border-2 px-8 py-2 border-gray-400 rounded-2xl flex items-center justify-center mb-3">
+                  <input {...getInputProps()} />
+                  <h3 className="font-bold text-gray-800 text-[20px]">
+                    Upload new Image
+                  </h3>
+                </section>
+              </div>
               <section className="w-full border-dashed border-2 px-8 py-2 border-gray-400 rounded-2xl flex items-center justify-center">
                 <div>
                   <input />
