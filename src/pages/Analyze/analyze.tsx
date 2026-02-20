@@ -5,8 +5,18 @@ import { useDropzone } from 'react-dropzone'
 import { FiUploadCloud } from 'react-icons/fi'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { IoIosInformationCircleOutline } from 'react-icons/io'
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
 
 interface Props {}
+
+export default function ArrowTooltips() {
+  return (
+    <Tooltip title="Add" arrow>
+      <Button>Arrow</Button>
+    </Tooltip>
+  );
+}
 
 export const Analyze: React.FC<Props> = memo(() => {
   const [flow, setFlow] = useState<
@@ -177,21 +187,63 @@ export const Analyze: React.FC<Props> = memo(() => {
           download="demo_image_one.png"
           className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
         >
-          Download Demo Image 1
+          <Tooltip arrow title={<img src="/demo_image_one.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
+            <span>Download Demo Image 1</span>
+          </Tooltip>
         </a>
-        <a
+       <a
           href="/demo_image_two.png"
           download="demo_image_two.png"
           className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
         >
-          Download Demo Image 2
+          <Tooltip arrow title={<img src="/demo_image_two.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
+            <span>Download Demo Image 2</span>
+          </Tooltip>
         </a>
         <a
           href="/demo_image_three.png"
           download="demo_image_three.png"
           className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
         >
-          Download Demo Image 3
+          <Tooltip arrow title={<img src="/demo_image_three.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
+            <span>Download Demo Image 3</span>
+          </Tooltip>
+        </a>
+        <a
+          href="/demo_image_four.png"
+          download="demo_image_four.png"
+          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
+        >
+          <Tooltip arrow title={
+            <div className="bg-white rounded-md overflow-hidden">
+              <img
+                src="/demo_image_four.png"
+                alt="Demo"
+                className="w-48"
+              />
+              <span className="block w-full text-base mt-1 text-black text-center">
+                Pixel Size: 4.1
+                <br />
+                Focal Length: 4.2
+                <br />
+                Use Tetra
+              </span>
+            </div>
+            }
+            slotProps={{
+              tooltip: {
+                sx: {
+                  backgroundColor: "transparent",
+                  padding: 0,
+                  fontFamily: "inherit",
+                  border: "2px solid black",
+                  borderRadius: "9px"
+                }
+              }
+            }}
+            >
+            <span>Download Demo Image 4</span>
+          </Tooltip>
         </a>
       </div>
       <div className="w-full flex items-stretch justify-center mt-12 gap-5">
