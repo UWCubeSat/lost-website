@@ -5,26 +5,16 @@ import { useDropzone } from 'react-dropzone'
 import { FiUploadCloud, FiDownload } from 'react-icons/fi'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { IoIosInformationCircleOutline } from 'react-icons/io'
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 
 interface Props {}
-
-export default function ArrowTooltips() {
-  return (
-    <Tooltip title="Add" arrow>
-      <Button>Arrow</Button>
-    </Tooltip>
-  );
-}
 
 export const Analyze: React.FC<Props> = memo(() => {
   const [flow, setFlow] = useState<
     'upload' | 'uploaded' | 'processing' | 'processed'
   >('upload')
-  const [pixelSize, setPixelSize] = useState<number>(22.2)
-  const [focalLength, setFocalLength] = useState<number>(35)
-  const [magnitudeFilter, setMagnitudeFilter] = useState<number>(5)
+  const [pixelSize, setPixelSize] = useState<number>()
+  const [focalLength, setFocalLength] = useState<number>()
+  const [magnitudeFilter, setMagnitudeFilter] = useState<number>()
   const [tetraVal, setTetraVal] = useState<number>(0)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
@@ -214,9 +204,7 @@ export const Analyze: React.FC<Props> = memo(() => {
             onClick={() => loadDemoImage('/lost_synthetic.png', 22.2, 35)}
             className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
           >
-            <Tooltip arrow title={<img src="/lost_synthetic.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-              <span>LOST-generated Synthetic Image</span>
-            </Tooltip>
+            <span>LOST-generated Synthetic Image</span>
           </button>
           <a
             href="/lost_synthetic.png"
@@ -231,9 +219,7 @@ export const Analyze: React.FC<Props> = memo(() => {
             onClick={() => loadDemoImage('/observatory.png', 22.2, 35)}
             className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
           >
-            <Tooltip arrow title={<img src="/observatory.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-              <span>Observatory Image</span>
-            </Tooltip>
+            <span>Observatory Image</span>
           </button>
           <a
             href="/observatory.png"
@@ -248,36 +234,7 @@ export const Analyze: React.FC<Props> = memo(() => {
             onClick={() => loadDemoImage('/mount_st_helens.png', 4.1, 4.2, 1)}
             className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
           >
-            <Tooltip arrow title={
-              <div className="bg-white rounded-md overflow-hidden">
-                <img
-                  src="/mount_st_helens.png"
-                  alt="Demo"
-                  className="w-48"
-                />
-                <span className="block w-full text-base mt-1 text-black text-center">
-                  Pixel Size: 4.1
-                  <br />
-                  Focal Length: 4.2
-                  <br />
-                  Use Tetra
-                </span>
-              </div>
-              }
-              slotProps={{
-                tooltip: {
-                  sx: {
-                    backgroundColor: "transparent",
-                    padding: 0,
-                    fontFamily: "inherit",
-                    border: "2px solid black",
-                    borderRadius: "9px"
-                  }
-                }
-              }}
-              >
-              <span>Mount St. Helens Image</span>
-            </Tooltip>
+            <span>Mount St. Helens Image</span>
           </button>
           <a
             href="/mount_st_helens.png"
@@ -405,7 +362,6 @@ export const Analyze: React.FC<Props> = memo(() => {
               placeholder="Pixel Size (µm)"
               value={pixelSize}
               onChange={(e) => setPixelSize(Number(e.target.value))}
-              defaultValue={22.2}
             />
           </div>
           <div className="flex gap-1 flex-col mt-2">
@@ -418,7 +374,6 @@ export const Analyze: React.FC<Props> = memo(() => {
               placeholder="Focal Length (mm)"
               value={focalLength}
               onChange={(e) => setFocalLength(Number(e.target.value))}
-              defaultValue={35}
             />
           </div>
           <div className="flex gap-1 flex-col mt-2">
@@ -444,7 +399,6 @@ export const Analyze: React.FC<Props> = memo(() => {
               placeholder="Centroid Magnitude Filter"
               value={magnitudeFilter}
               onChange={(e) => setMagnitudeFilter(Number(e.target.value))}
-              defaultValue={5}
             />
           </div>
           <div className="flex gap-1 flex-col mt-2">
