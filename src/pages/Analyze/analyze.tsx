@@ -35,27 +35,45 @@ export const Analyze: React.FC<Props> = memo(() => {
     processingTime: 0
   })
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+  const { getRootProps, getInputProps } = useDropzone({
     accept: { 'image/*': [] },
     maxFiles: 1,
     onDrop: async (files) => {
-      const base64 = (await toBase64(files[0])) as string
+      const file = files[0]
+      setSelectedFile(file)
+      const base64 = (await toBase64(file)) as string
       setUploadedImage(base64)
       setFlow('uploaded')
     },
   })
-  const files = acceptedFiles.map((file) => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-    </li>
-  ))
 
   const [submitPressed, setSubmitPressed] = useState(false)
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
 
+  const loadDemoImage = async (src: string, defaultPixelSize: number, defaultFocalLength: number, defaultTetra: number = 0) => {
+    const res = await fetch(src)
+    const blob = await res.blob()
+    const file = new File([blob], src.split('/').pop()!, { type: blob.type })
+    setSelectedFile(file)
+    setPixelSize(defaultPixelSize)
+    setFocalLength(defaultFocalLength)
+    setTetraVal(defaultTetra)
+    const base64 = (await toBase64(file)) as string
+    setUploadedImage(base64)
+    setFlow('uploaded')
+  }
+
+  const clearImage = () => {
+    setSelectedFile(null)
+    setUploadedImage(null)
+    setFlow('upload')
+  }
+
   const submitButtonPressed = async (): Promise<void> => {
-    if (!acceptedFiles[0]) return
+    if (!selectedFile) return
 
     setFlow('processing')
 
@@ -67,7 +85,7 @@ export const Analyze: React.FC<Props> = memo(() => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          image: await toBase64(acceptedFiles[0]),
+          image: await toBase64(selectedFile),
           focalLength,
           pixelSize,
           centroidMagnitudeFilter: magnitudeFilter,
@@ -111,7 +129,7 @@ export const Analyze: React.FC<Props> = memo(() => {
   }
 
   useEffect(() => {
-    if (submitPressed && acceptedFiles.length > 0) {
+    if (submitPressed && selectedFile) {
       async function process() {
         setFlow('processing')
 
@@ -126,7 +144,7 @@ export const Analyze: React.FC<Props> = memo(() => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              image: await toBase64(acceptedFiles[0]),
+              image: await toBase64(selectedFile),
               focalLength,
               pixelSize,
               centroidMagnitudeFilter: magnitudeFilter,
@@ -176,43 +194,31 @@ export const Analyze: React.FC<Props> = memo(() => {
       process()
       setSubmitPressed(false)
     }
-  }, [pixelSize, focalLength, magnitudeFilter, acceptedFiles])
+  }, [pixelSize, focalLength, magnitudeFilter, selectedFile])
 
   return (
     <>
       <Navbar activePath="/analyze" />
       <div className="w-full flex justify-center gap-4 mt-6">
-        <a
-          href="/demo_image_one.png"
-          download="demo_image_one.png"
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
+        <button
+          onClick={() => loadDemoImage('/demo_image_one.png', 22.2, 35)}
+          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
         >
           <Tooltip arrow title={<img src="/demo_image_one.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-            <span>Download Demo Image 1</span>
+            <span>Demo Image 1</span>
           </Tooltip>
-        </a>
-       <a
-          href="/demo_image_two.png"
-          download="demo_image_two.png"
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
+        </button>
+        <button
+          onClick={() => loadDemoImage('/demo_image_two.png', 22.2, 35)}
+          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
         >
           <Tooltip arrow title={<img src="/demo_image_two.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-            <span>Download Demo Image 2</span>
+            <span>Demo Image 2</span>
           </Tooltip>
-        </a>
-        <a
-          href="/demo_image_three.png"
-          download="demo_image_three.png"
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
-        >
-          <Tooltip arrow title={<img src="/demo_image_three.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-            <span>Download Demo Image 3</span>
-          </Tooltip>
-        </a>
-        <a
-          href="/demo_image_four.png"
-          download="demo_image_four.png"
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
+        </button>
+        <button
+          onClick={() => loadDemoImage('/demo_image_four.png', 4.1, 4.2, 1)}
+          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
         >
           <Tooltip arrow title={
             <div className="bg-white rounded-md overflow-hidden">
@@ -242,9 +248,9 @@ export const Analyze: React.FC<Props> = memo(() => {
               }
             }}
             >
-            <span>Download Demo Image 4</span>
+            <span>Demo Image 3</span>
           </Tooltip>
-        </a>
+        </button>
       </div>
       <div className="w-full flex items-stretch justify-center mt-12 gap-5">
         <div className="w-[500px] ">
@@ -292,6 +298,20 @@ export const Analyze: React.FC<Props> = memo(() => {
                   src={uploadedImage}
                   alt="Uploaded Image"
                 />
+                <div className="flex gap-3 mb-3">
+                  <button
+                    onClick={clearImage}
+                    className="rounded-lg border border-gray-400 text-gray-700 text-[13px] py-1 px-3 cursor-pointer hover:bg-gray-100"
+                  >
+                    Remove
+                  </button>
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <button className="rounded-lg border border-gray-400 text-gray-700 text-[13px] py-1 px-3 cursor-pointer hover:bg-gray-100">
+                      Choose Different File
+                    </button>
+                  </div>
+                </div>
               </div>
             </section>
           )}
@@ -413,7 +433,8 @@ export const Analyze: React.FC<Props> = memo(() => {
             <input
               type="checkbox"
               className="self-start w-5 h-5"
-              onChange={(e) => setTetraVal(Number(tetraVal + (1 % 2)))}
+              checked={tetraVal === 1}
+              onChange={() => setTetraVal(tetraVal === 1 ? 0 : 1)}
             />
           </div>
           <div className="flex justify-center p-4">
