@@ -64,7 +64,7 @@ const Index: React.FC<Props> = memo(() => {
         </div>
       </div>
       <div className="font-mono text-center pt-10 pb-10 text-2xl">
-        <em>Check out our Analyze page to see more!</em>
+        <em>Want to see LOST in action? <a href="/analyze" className="text-blue-600 underline hover:text-blue-800">Try it out!</a></em>
       </div>
       <Footer />
     </>

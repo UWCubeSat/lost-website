@@ -2,7 +2,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import React, { memo, Suspense, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { FiUploadCloud } from 'react-icons/fi'
+import { FiUploadCloud, FiDownload } from 'react-icons/fi'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { IoIosInformationCircleOutline } from 'react-icons/io'
 import Button from '@mui/material/Button';
@@ -35,27 +35,45 @@ export const Analyze: React.FC<Props> = memo(() => {
     processingTime: 0
   })
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+  const { getRootProps, getInputProps } = useDropzone({
     accept: { 'image/*': [] },
     maxFiles: 1,
     onDrop: async (files) => {
-      const base64 = (await toBase64(files[0])) as string
+      const file = files[0]
+      setSelectedFile(file)
+      const base64 = (await toBase64(file)) as string
       setUploadedImage(base64)
       setFlow('uploaded')
     },
   })
-  const files = acceptedFiles.map((file) => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-    </li>
-  ))
 
   const [submitPressed, setSubmitPressed] = useState(false)
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
 
+  const loadDemoImage = async (src: string, defaultPixelSize: number, defaultFocalLength: number, defaultTetra: number = 0) => {
+    const res = await fetch(src)
+    const blob = await res.blob()
+    const file = new File([blob], src.split('/').pop()!, { type: blob.type })
+    setSelectedFile(file)
+    setPixelSize(defaultPixelSize)
+    setFocalLength(defaultFocalLength)
+    setTetraVal(defaultTetra)
+    const base64 = (await toBase64(file)) as string
+    setUploadedImage(base64)
+    setFlow('uploaded')
+  }
+
+  const clearImage = () => {
+    setSelectedFile(null)
+    setUploadedImage(null)
+    setFlow('upload')
+  }
+
   const submitButtonPressed = async (): Promise<void> => {
-    if (!acceptedFiles[0]) return
+    if (!selectedFile) return
 
     setFlow('processing')
 
@@ -67,7 +85,7 @@ export const Analyze: React.FC<Props> = memo(() => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          image: await toBase64(acceptedFiles[0]),
+          image: await toBase64(selectedFile),
           focalLength,
           pixelSize,
           centroidMagnitudeFilter: magnitudeFilter,
@@ -111,7 +129,7 @@ export const Analyze: React.FC<Props> = memo(() => {
   }
 
   useEffect(() => {
-    if (submitPressed && acceptedFiles.length > 0) {
+    if (submitPressed && selectedFile) {
       async function process() {
         setFlow('processing')
 
@@ -126,7 +144,7 @@ export const Analyze: React.FC<Props> = memo(() => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              image: await toBase64(acceptedFiles[0]),
+              image: await toBase64(selectedFile),
               focalLength,
               pixelSize,
               centroidMagnitudeFilter: magnitudeFilter,
@@ -176,75 +194,99 @@ export const Analyze: React.FC<Props> = memo(() => {
       process()
       setSubmitPressed(false)
     }
-  }, [pixelSize, focalLength, magnitudeFilter, acceptedFiles])
+  }, [pixelSize, focalLength, magnitudeFilter, selectedFile])
+
+  useEffect(() => {
+    if (!modalVisible) return
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setModalVisible(false)
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [modalVisible])
 
   return (
     <>
       <Navbar activePath="/analyze" />
       <div className="w-full flex justify-center gap-4 mt-6">
-        <a
-          href="/demo_image_one.png"
-          download="demo_image_one.png"
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
-        >
-          <Tooltip arrow title={<img src="/demo_image_one.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-            <span>Download Demo Image 1</span>
-          </Tooltip>
-        </a>
-       <a
-          href="/demo_image_two.png"
-          download="demo_image_two.png"
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
-        >
-          <Tooltip arrow title={<img src="/demo_image_two.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-            <span>Download Demo Image 2</span>
-          </Tooltip>
-        </a>
-        <a
-          href="/demo_image_three.png"
-          download="demo_image_three.png"
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
-        >
-          <Tooltip arrow title={<img src="/demo_image_three.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-            <span>Download Demo Image 3</span>
-          </Tooltip>
-        </a>
-        <a
-          href="/demo_image_four.png"
-          download="demo_image_four.png"
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer"
-        >
-          <Tooltip arrow title={
-            <div className="bg-white rounded-md overflow-hidden">
-              <img
-                src="/demo_image_four.png"
-                alt="Demo"
-                className="w-48"
-              />
-              <span className="block w-full text-base mt-1 text-black text-center">
-                Pixel Size: 4.1
-                <br />
-                Focal Length: 4.2
-                <br />
-                Use Tetra
-              </span>
-            </div>
-            }
-            slotProps={{
-              tooltip: {
-                sx: {
-                  backgroundColor: "transparent",
-                  padding: 0,
-                  fontFamily: "inherit",
-                  border: "2px solid black",
-                  borderRadius: "9px"
-                }
+        <div className="flex">
+          <button
+            onClick={() => loadDemoImage('/lost_synthetic.png', 22.2, 35)}
+            className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
+          >
+            <Tooltip arrow title={<img src="/lost_synthetic.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
+              <span>LOST-generated Synthetic Image</span>
+            </Tooltip>
+          </button>
+          <a
+            href="/lost_synthetic.png"
+            download="lost_synthetic.png"
+            className="flex items-center border border-l-0 border-gray-400 rounded-r-lg px-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <FiDownload className="text-sm" />
+          </a>
+        </div>
+        <div className="flex">
+          <button
+            onClick={() => loadDemoImage('/observatory.png', 22.2, 35)}
+            className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
+          >
+            <Tooltip arrow title={<img src="/observatory.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
+              <span>Observatory Image</span>
+            </Tooltip>
+          </button>
+          <a
+            href="/observatory.png"
+            download="observatory.png"
+            className="flex items-center border border-l-0 border-gray-400 rounded-r-lg px-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <FiDownload className="text-sm" />
+          </a>
+        </div>
+        <div className="flex">
+          <button
+            onClick={() => loadDemoImage('/mount_st_helens.png', 4.1, 4.2, 1)}
+            className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
+          >
+            <Tooltip arrow title={
+              <div className="bg-white rounded-md overflow-hidden">
+                <img
+                  src="/mount_st_helens.png"
+                  alt="Demo"
+                  className="w-48"
+                />
+                <span className="block w-full text-base mt-1 text-black text-center">
+                  Pixel Size: 4.1
+                  <br />
+                  Focal Length: 4.2
+                  <br />
+                  Use Tetra
+                </span>
+              </div>
               }
-            }}
-            >
-            <span>Download Demo Image 4</span>
-          </Tooltip>
-        </a>
+              slotProps={{
+                tooltip: {
+                  sx: {
+                    backgroundColor: "transparent",
+                    padding: 0,
+                    fontFamily: "inherit",
+                    border: "2px solid black",
+                    borderRadius: "9px"
+                  }
+                }
+              }}
+              >
+              <span>Mount St. Helens Image</span>
+            </Tooltip>
+          </button>
+          <a
+            href="/mount_st_helens.png"
+            download="mount_st_helens.png"
+            className="flex items-center border border-l-0 border-gray-400 rounded-r-lg px-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <FiDownload className="text-sm" />
+          </a>
+        </div>
       </div>
       <div className="w-full flex items-stretch justify-center mt-12 gap-5">
         <div className="w-[500px] ">
@@ -292,18 +334,23 @@ export const Analyze: React.FC<Props> = memo(() => {
                   src={uploadedImage}
                   alt="Uploaded Image"
                 />
+                <button
+                  onClick={clearImage}
+                  className="rounded-lg border border-gray-400 text-gray-700 text-[13px] py-1 px-3 mb-3 cursor-pointer hover:bg-gray-100"
+                >
+                  Remove
+                </button>
               </div>
             </section>
           )}
           {flow === 'processed' && (
             <>
               <div {...getRootProps({ className: 'dropzone' })}>
-                <section className="w-full border-dashed border-2 px-8 py-2 border-gray-400 rounded-2xl flex items-center justify-center mb-3">
-                  <input {...getInputProps()} />
-                  <h3 className="font-bold text-gray-800 text-[20px]">
-                    Upload new Image
-                  </h3>
-                </section>
+                <input {...getInputProps()} />
+                <button className="w-full cursor-pointer rounded-lg border-2 border-gray-400 py-2 px-4 mb-3 font-bold text-gray-800 text-[16px] hover:bg-gray-100 flex items-center justify-center gap-2">
+                  <FiUploadCloud className="text-lg" />
+                  Upload New Image
+                </button>
               </div>
               <section className="w-full border-dashed border-2 px-8 py-2 border-gray-400 rounded-2xl flex items-center justify-center">
                 <div>
@@ -413,7 +460,8 @@ export const Analyze: React.FC<Props> = memo(() => {
             <input
               type="checkbox"
               className="self-start w-5 h-5"
-              onChange={(e) => setTetraVal(Number(tetraVal + (1 % 2)))}
+              checked={tetraVal === 1}
+              onChange={() => setTetraVal(tetraVal === 1 ? 0 : 1)}
             />
           </div>
           <div className="flex justify-center p-4">
@@ -427,24 +475,32 @@ export const Analyze: React.FC<Props> = memo(() => {
           </div>
         </div>
       </div>
-      <div
-        className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-gray-100 rounded-3xl overflow-hidden px-4 py-4 ${modalVisible ? 'block' : 'hidden'}`}
-      >
+      {modalVisible && (
         <div
-          className="w-full -mt-3 overflow-visible flex justify-end z-100 relative cursor-pointer font-bold"
-          onClick={() => {
-            setModalVisible(false)
-          }}
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+          onClick={() => setModalVisible(false)}
         >
-          X
+          <div
+            className="w-[90%] h-[90%] bg-gray-100 rounded-3xl overflow-hidden p-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="absolute top-4 right-4 cursor-pointer font-bold text-lg z-10"
+              onClick={() => {
+                setModalVisible(false)
+              }}
+            >
+              X
+            </div>
+            <div
+              className="w-full h-full bg-contain bg-no-repeat bg-center"
+              style={{
+                backgroundImage: `url(${flow === 'processed' ? output.base64Image : uploadedImage})`,
+              }}
+            ></div>
+          </div>
         </div>
-        <div
-          className="w-full bg-contain h-full bg-no-repeat bg-center"
-          style={{
-            backgroundImage: `url(${output.base64Image})`,
-          }}
-        ></div>
-      </div>
+      )}
     </>
   )
 })
