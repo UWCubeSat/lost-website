@@ -196,6 +196,15 @@ export const Analyze: React.FC<Props> = memo(() => {
     }
   }, [pixelSize, focalLength, magnitudeFilter, selectedFile])
 
+  useEffect(() => {
+    if (!modalVisible) return
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setModalVisible(false)
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [modalVisible])
+
   return (
     <>
       <Navbar activePath="/analyze" />
@@ -466,24 +475,32 @@ export const Analyze: React.FC<Props> = memo(() => {
           </div>
         </div>
       </div>
-      <div
-        className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[90%] bg-gray-100 rounded-3xl overflow-hidden px-4 py-4 ${modalVisible ? 'block' : 'hidden'}`}
-      >
+      {modalVisible && (
         <div
-          className="w-full -mt-3 overflow-visible flex justify-end z-100 relative cursor-pointer font-bold"
-          onClick={() => {
-            setModalVisible(false)
-          }}
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+          onClick={() => setModalVisible(false)}
         >
-          X
+          <div
+            className="w-[90%] h-[90%] bg-gray-100 rounded-3xl overflow-hidden p-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="absolute top-4 right-4 cursor-pointer font-bold text-lg z-10"
+              onClick={() => {
+                setModalVisible(false)
+              }}
+            >
+              X
+            </div>
+            <div
+              className="w-full h-full bg-contain bg-no-repeat bg-center"
+              style={{
+                backgroundImage: `url(${flow === 'processed' ? output.base64Image : uploadedImage})`,
+              }}
+            ></div>
+          </div>
         </div>
-        <div
-          className="w-full bg-contain h-full bg-no-repeat bg-center"
-          style={{
-            backgroundImage: `url(${output.base64Image})`,
-          }}
-        ></div>
-      </div>
+      )}
     </>
   )
 })
