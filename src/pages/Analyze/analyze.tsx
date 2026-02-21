@@ -2,7 +2,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import React, { memo, Suspense, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { FiUploadCloud } from 'react-icons/fi'
+import { FiUploadCloud, FiDownload } from 'react-icons/fi'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { IoIosInformationCircleOutline } from 'react-icons/io'
 import Button from '@mui/material/Button';
@@ -200,57 +200,84 @@ export const Analyze: React.FC<Props> = memo(() => {
     <>
       <Navbar activePath="/analyze" />
       <div className="w-full flex justify-center gap-4 mt-6">
-        <button
-          onClick={() => loadDemoImage('/demo_image_one.png', 22.2, 35)}
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
-        >
-          <Tooltip arrow title={<img src="/demo_image_one.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-            <span>Demo Image 1</span>
-          </Tooltip>
-        </button>
-        <button
-          onClick={() => loadDemoImage('/demo_image_two.png', 22.2, 35)}
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
-        >
-          <Tooltip arrow title={<img src="/demo_image_two.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
-            <span>Demo Image 2</span>
-          </Tooltip>
-        </button>
-        <button
-          onClick={() => loadDemoImage('/demo_image_four.png', 4.1, 4.2, 1)}
-          className="rounded-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
-        >
-          <Tooltip arrow title={
-            <div className="bg-white rounded-md overflow-hidden">
-              <img
-                src="/demo_image_four.png"
-                alt="Demo"
-                className="w-48"
-              />
-              <span className="block w-full text-base mt-1 text-black text-center">
-                Pixel Size: 4.1
-                <br />
-                Focal Length: 4.2
-                <br />
-                Use Tetra
-              </span>
-            </div>
-            }
-            slotProps={{
-              tooltip: {
-                sx: {
-                  backgroundColor: "transparent",
-                  padding: 0,
-                  fontFamily: "inherit",
-                  border: "2px solid black",
-                  borderRadius: "9px"
-                }
+        <div className="flex">
+          <button
+            onClick={() => loadDemoImage('/lost_synthetic.png', 22.2, 35)}
+            className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
+          >
+            <Tooltip arrow title={<img src="/lost_synthetic.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
+              <span>LOST-generated Synthetic Image</span>
+            </Tooltip>
+          </button>
+          <a
+            href="/lost_synthetic.png"
+            download="lost_synthetic.png"
+            className="flex items-center border border-l-0 border-gray-400 rounded-r-lg px-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <FiDownload className="text-sm" />
+          </a>
+        </div>
+        <div className="flex">
+          <button
+            onClick={() => loadDemoImage('/observatory.png', 22.2, 35)}
+            className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
+          >
+            <Tooltip arrow title={<img src="/observatory.png" className="w-48 rounded-md" />} slotProps={{tooltip: { sx: {backgroundColor: 'transparent'},},}}>
+              <span>Observatory Image</span>
+            </Tooltip>
+          </button>
+          <a
+            href="/observatory.png"
+            download="observatory.png"
+            className="flex items-center border border-l-0 border-gray-400 rounded-r-lg px-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <FiDownload className="text-sm" />
+          </a>
+        </div>
+        <div className="flex">
+          <button
+            onClick={() => loadDemoImage('/mount_st_helens.png', 4.1, 4.2, 1)}
+            className="rounded-l-lg border border-gray-400 text-gray-700 text-[14px] py-2 px-4 cursor-pointer hover:bg-gray-100"
+          >
+            <Tooltip arrow title={
+              <div className="bg-white rounded-md overflow-hidden">
+                <img
+                  src="/mount_st_helens.png"
+                  alt="Demo"
+                  className="w-48"
+                />
+                <span className="block w-full text-base mt-1 text-black text-center">
+                  Pixel Size: 4.1
+                  <br />
+                  Focal Length: 4.2
+                  <br />
+                  Use Tetra
+                </span>
+              </div>
               }
-            }}
-            >
-            <span>Demo Image 3</span>
-          </Tooltip>
-        </button>
+              slotProps={{
+                tooltip: {
+                  sx: {
+                    backgroundColor: "transparent",
+                    padding: 0,
+                    fontFamily: "inherit",
+                    border: "2px solid black",
+                    borderRadius: "9px"
+                  }
+                }
+              }}
+              >
+              <span>Mount St. Helens Image</span>
+            </Tooltip>
+          </button>
+          <a
+            href="/mount_st_helens.png"
+            download="mount_st_helens.png"
+            className="flex items-center border border-l-0 border-gray-400 rounded-r-lg px-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
+            <FiDownload className="text-sm" />
+          </a>
+        </div>
       </div>
       <div className="w-full flex items-stretch justify-center mt-12 gap-5">
         <div className="w-[500px] ">
@@ -298,32 +325,23 @@ export const Analyze: React.FC<Props> = memo(() => {
                   src={uploadedImage}
                   alt="Uploaded Image"
                 />
-                <div className="flex gap-3 mb-3">
-                  <button
-                    onClick={clearImage}
-                    className="rounded-lg border border-gray-400 text-gray-700 text-[13px] py-1 px-3 cursor-pointer hover:bg-gray-100"
-                  >
-                    Remove
-                  </button>
-                  <div {...getRootProps()}>
-                    <input {...getInputProps()} />
-                    <button className="rounded-lg border border-gray-400 text-gray-700 text-[13px] py-1 px-3 cursor-pointer hover:bg-gray-100">
-                      Choose Different File
-                    </button>
-                  </div>
-                </div>
+                <button
+                  onClick={clearImage}
+                  className="rounded-lg border border-gray-400 text-gray-700 text-[13px] py-1 px-3 mb-3 cursor-pointer hover:bg-gray-100"
+                >
+                  Remove
+                </button>
               </div>
             </section>
           )}
           {flow === 'processed' && (
             <>
               <div {...getRootProps({ className: 'dropzone' })}>
-                <section className="w-full border-dashed border-2 px-8 py-2 border-gray-400 rounded-2xl flex items-center justify-center mb-3">
-                  <input {...getInputProps()} />
-                  <h3 className="font-bold text-gray-800 text-[20px]">
-                    Upload new Image
-                  </h3>
-                </section>
+                <input {...getInputProps()} />
+                <button className="w-full cursor-pointer rounded-lg border-2 border-gray-400 py-2 px-4 mb-3 font-bold text-gray-800 text-[16px] hover:bg-gray-100 flex items-center justify-center gap-2">
+                  <FiUploadCloud className="text-lg" />
+                  Upload New Image
+                </button>
               </div>
               <section className="w-full border-dashed border-2 px-8 py-2 border-gray-400 rounded-2xl flex items-center justify-center">
                 <div>
