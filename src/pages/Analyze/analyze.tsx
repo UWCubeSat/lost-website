@@ -14,7 +14,7 @@ export const Analyze: React.FC<Props> = memo(() => {
   >('upload')
   const [pixelSize, setPixelSize] = useState<number>()
   const [focalLength, setFocalLength] = useState<number>()
-  const [magnitudeFilter, setMagnitudeFilter] = useState<number>()
+  const [magnitudeFilter, setMagnitudeFilter] = useState<number>(5)
   const [tetraVal, setTetraVal] = useState<number>(0)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
@@ -51,6 +51,7 @@ export const Analyze: React.FC<Props> = memo(() => {
     setPixelSize(defaultPixelSize)
     setFocalLength(defaultFocalLength)
     setTetraVal(defaultTetra)
+    setMagnitudeFilter(5)
     const base64 = (await toBase64(file)) as string
     setUploadedImage(base64)
     setFlow('uploaded')
