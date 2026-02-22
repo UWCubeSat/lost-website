@@ -20,50 +20,47 @@ const Index: React.FC<Props> = memo(() => {
         satellites. It is being developed in the Husky Satellite Lab, a CubeSat
         team at the University of Washington.
       </div>
+      <div className="font-mono text-center pl-60 pr-60 pt-4">
+        Check out our <a href="https://digitalcommons.usu.edu/smallsat/2023/all2023/5/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">published paper</a> from SmallSat 2023.
+      </div>
       <div className="font-mono text-center pl-60 pr-60 pt-10 text-4xl">
         <strong>What is a Star Tracker?</strong>
       </div>
       <div className="font-mono text-center pl-60 pr-60 pt-2 pb-10">
-        A star tracker is a high-precision optical device used to determine a
-        spacecraft’s orientation in space by observing the positions of stars.
-        By capturing images of the night sky and comparing them to an onboard
-        star catalog, the star tracker calculates the spacecraft’s exact
-        attitude in three-dimensional space. This information is critical for
-        navigation, stability, and alignment of instruments in satellites,
-        CubeSats, and other space missions.
+        A star tracker is an optical device used to determine a
+        satellite's orientation, or "attitude", by identifying constellations of stars.
+        By capturing images of the surrounding star field and running them through pattern recognition algorithms, the star
+        tracker calculates the spacecraft’s precise attitude in three-dimensional space. This information
+        is critical for satellite navigation, stability, and alignment.
       </div>
       <div className="font-mono text-center pl-60 pr-60 pt-2 pb-4">
         Star tracking is done in three main steps:
       </div>
       <div className="flex font-mono text-center pl-30 pr-30">
-        <div className="pl-10 pr-10">
+        <div className="flex-1 pl-10 pr-10">
           <div className="text-2xl">
-            <strong>Image Aquisition</strong>
+            <strong>Centroiding</strong>
           </div>
           <div>
-            The star tracker captures an image of the night sky using its
-            onboard camera. This image contains multiple bright points (stars)
-            against a dark background.
+            Onboard software scans the image to determine which pixels are stars, and calculates
+            the coordinates of each star's centroid.
           </div>
         </div>
-        <div className="pl-10 pr-10">
+        <div className="flex-1 pl-10 pr-10">
           <div className="text-2xl">
             <strong>Star Identification</strong>
           </div>
           <div>
-            The onboard software processes the image to identify which stars are
-            visible. It compares the detected star pattern to a known star
-            catalog using pattern recognition algorithms.
+            Pattern recognition algorithms like Pyramid and Tetra match centroids to known stars,
+            with the help of a star catalog.
           </div>
         </div>
-        <div className="pl-10 pr-10">
+        <div className="flex-1 pl-10 pr-10">
           <div className="text-2xl">
-            <strong>Attitude Determination</strong>
+            <strong>Attitude Estimation</strong>
           </div>
           <div>
-            Once the stars are identified, the star tracker calculates the
-            spacecraft's orientation (attitude) by determining how the observed
-            star positions compare to their known positions in space.
+            Algorithms like QUEST use the identified stars and their positions to compute the satellite's attitude.
           </div>
         </div>
       </div>
