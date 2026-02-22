@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { GitHubRepoCard } from '@/components/GitHubRepoCard'
 import React, { memo, Suspense } from 'react'
 
 interface Props {}
@@ -8,8 +9,11 @@ const Index: React.FC<Props> = memo(() => {
   return (
     <>
       <Navbar activePath="/" />
-      <div className="flex items-center justify-center h-screen w-full bg-cover bg-center bg-[url(/andy-holmes-rCbdp8VCYhQ-unsplash.jpg)] text-center text-7xl text-white font-mono">
-        <strong>LOST API</strong>
+      <div className="flex items-center justify-center h-screen w-full bg-cover bg-center bg-[url(/andy-holmes-rCbdp8VCYhQ-unsplash.jpg)] text-center text-white font-mono">
+        <div className="flex flex-col items-center gap-8">
+          <strong className="text-7xl">Open-Source Star Tracking</strong>
+          <GitHubRepoCard />
+        </div>
       </div>
       <div className="font-mono text-center pl-60 pr-60 pt-10">
         LOST is an open-source star tracker built for small, low-power, low-cost
