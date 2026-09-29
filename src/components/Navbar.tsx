@@ -12,7 +12,7 @@ export const pages = [
   //{ title: 'Generate', path: '/generate', newTab: false },
   {
     title: 'Our Lab',
-    path: 'https://huskysat.aa.washington.edu/',
+    path: 'https://huskysat.org/',
     newTab: true,
   },
 ]
